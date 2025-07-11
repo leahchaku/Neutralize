@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Neutralize",
+  "version": "1.0.0",
+  "description": "Neutralize (by Leah): flags biased or legally risky wording and suggests neutral alternatives. On-device. Minimal & accessible.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_title": "Neutralize",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "host_permissions": ["<all_urls>"]
+}

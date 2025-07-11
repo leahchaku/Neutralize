@@ -1,0 +1,99 @@
+<!-- File: popup.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Neutralize</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Leah: dead-simple, dark, no frameworks. -->
+  <style>
+    :root{
+      --bg:#0F1115, --surface:#16181D, --ink:#ECEFF4, --muted:#C7D0E0, --accent:#E11D48;
+      --bg:#0F1115; --surface:#16181D; --ink:#ECEFF4; --muted:#C7D0E0; --accent:#E11D48;
+      --radius:14px;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; }
+    body{
+      width:380px; max-width:380px; background:var(--bg); color:var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      line-height:1.5;
+    }
+    .wrap{ padding:14px; display:flex; flex-direction:column; gap:12px; }
+    .card{
+      background:var(--surface); border:1px solid #1f232a;
+      border-radius:var(--radius); padding:12px; box-shadow:0 6px 18px rgba(0,0,0,.25);
+    }
+    h1{ font-size:16px; margin:0 0 6px 0; font-weight:700; letter-spacing:.2px; }
+    .row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    button, .chip{
+      background:#1b1f27; border:1px solid #292e38; color:var(--ink);
+      padding:8px 10px; border-radius:10px; cursor:pointer; font-weight:600;
+    }
+    button.primary{ background:var(--accent); border-color:var(--accent); color:white; }
+    button:focus, .chip:focus { outline:3px solid var(--accent); outline-offset:2px; }
+    .chip{ display:inline-flex; gap:6px; align-items:center; user-select:none; }
+    .chip[data-on="true"]{ background:#22151a; border-color:#3a101b; color:#ffd8e1; }
+    .muted{ color:var(--muted); font-size:12px; }
+    textarea{
+      width:100%; min-height:120px; resize:vertical; color:var(--ink);
+      background:#0f1218; border:1px solid #262a33; border-radius:10px; padding:10px;
+    }
+    .results{ display:flex; flex-direction:column; gap:8px; max-height:240px; overflow:auto; }
+    .result{
+      display:flex; flex-direction:column; gap:4px; border:1px dashed #2a2f39; border-radius:10px; padding:8px;
+      background:#12151b;
+    }
+    .result:hover{ background:#151a23; }
+    .badge{ font-size:11px; padding:2px 6px; border-radius:999px; border:1px solid #2a2f39; color:var(--muted);}
+    .badge.cat{ border-color:#3a101b; color:#ffd8e1; background:#22151a; }
+    .badge.sev-low{ border-color:#20452e; color:#b4f7c7; background:#0f1914;}
+    .badge.sev-med{ border-color:#7a5b24; color:#ffe0a1; background:#21180b;}
+    .badge.sev-high{ border-color:#5a1421; color:#ffc2ce; background:#230b10;}
+    .footer{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .visually-hidden{ position:absolute !important; width:1px; height:1px; margin:-1px; padding:0; border:0; clip:rect(0 0 0 0); overflow:hidden; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1 aria-label="Neutralize heading">Neutralize</h1>
+      <div class="row" style="justify-content:space-between;">
+        <button id="scanPageBtn" class="primary" aria-label="Scan the current page for bias">Scan Page</button>
+        <label class="row" style="color:var(--muted); gap:8px;" title="Toggle paste-text mode">
+          <input id="pasteToggle" type="checkbox" aria-label="Toggle paste text instead" />
+          <span>Paste text instead</span>
+        </label>
+      </div>
+      <div id="pasteArea" hidden>
+        <textarea id="pasteText" aria-label="Text input to scan"></textarea>
+        <div class="row" style="justify-content:flex-end; margin-top:8px;">
+          <button id="scanTextBtn" aria-label="Scan the pasted text">Scan Text</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" id="chips" aria-label="Filter categories"></div>
+      <div class="muted">Toggle categories to include in scanning. Preferences are saved.</div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div class="muted" id="summary">No scan yet.</div>
+        <div class="row">
+          <button id="exportBtn" aria-label="Export report as Markdown">Export report (Markdown)</button>
+          <button id="copyBtn" aria-label="Copy Markdown to clipboard">Copy MD</button>
+        </div>
+      </div>
+      <div class="results" id="results" role="list" aria-label="Scan results"></div>
+    </div>
+
+    <div class="footer muted">
+      <small>“Neutralize” provides educational guidance only and is not legal advice.</small>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
