@@ -136,3 +136,7 @@ DEFAULT_RULES.push(
     "Clarify the true requirement (e.g., “access to a computer during work hours”).",
     "med")
 );
+
+function rule(category, re, why, suggestion, severity){
+  return { category, reSrc: re.source, reFlags: re.flags, why, suggestion, severity };
+}
