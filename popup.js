@@ -122,3 +122,17 @@ const DEFAULT_RULES = [
     "Tailor disclaimers to applicable law and provide clear, conspicuous wording.",
     "med")
 ];
+
+// Extra high-signal variants
+DEFAULT_RULES.push(
+  rule("legal", /\b(we\s+may\s+modify\s+these\s+terms\s+at\s+any\s+time)\b/gi,
+    "Unbounded change rights can be unfair or unclear.",
+    "State how changes are communicated, when they take effect, and cancellation options.",
+    "high")
+);
+DEFAULT_RULES.push(
+  rule("socio", /\b(must\s+(?:own|provide)\s+(?:a\s+)?(?:laptop|vehicle|car))\b/gi,
+    "May exclude qualified folks without those resources.",
+    "Clarify the true requirement (e.g., “access to a computer during work hours”).",
+    "med")
+);
