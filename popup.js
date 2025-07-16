@@ -140,3 +140,20 @@ DEFAULT_RULES.push(
 function rule(category, re, why, suggestion, severity){
   return { category, reSrc: re.source, reFlags: re.flags, why, suggestion, severity };
 }
+
+// Grabby hands for DOM
+const els = {
+  chips: document.getElementById("chips"),
+  results: document.getElementById("results"),
+  summary: document.getElementById("summary"),
+  scanPageBtn: document.getElementById("scanPageBtn"),
+  pasteToggle: document.getElementById("pasteToggle"),
+  pasteArea: document.getElementById("pasteArea"),
+  pasteText: document.getElementById("pasteText"),
+  scanTextBtn: document.getElementById("scanTextBtn"),
+  exportBtn: document.getElementById("exportBtn"),
+  copyBtn: document.getElementById("copyBtn")
+};
+
+let currentFindings = [];
+let activeFilters = {};
