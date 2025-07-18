@@ -157,3 +157,50 @@ const els = {
 
 let currentFindings = [];
 let activeFilters = {};
+
+leahBoot();
+
+async function leahBoot(){
+  els.chips.innerHTML = "";
+  for (const c of CATEGORIES){
+    const chip = document.createElement("button");
+    chip.className = "chip";
+    chip.setAttribute("role", "switch");
+    chip.setAttribute("aria-checked", "true");
+    chip.dataset.id = c.id;
+    chip.dataset.on = "true";
+    chip.textContent = c.label;
+    chip.addEventListener("click", () => flipChip(chip));
+    els.chips.appendChild(chip);
+    activeFilters[c.id] = true;
+  }
+
+  const saved = await chrome.storage.local.get(["biasguard_filters"]);
+  if (saved.biasguard_filters){
+    for (const [k,v] of Object.entries(saved.biasguard_filters)){
+      const chip = [...els.chips.children].find(x => x.dataset.id === k);
+      if (chip){
+        chip.dataset.on = v ? "true" : "false";
+        chip.setAttribute("aria-checked", v ? "true" : "false");
+      }
+      activeFilters[k] = !!v;
+    }
+  } else {
+    await chrome.storage.local.set({ biasguard_filters: activeFilters });
+  }
+
+  els.pasteToggle.addEventListener("change", () => {
+    const on = els.pasteToggle.checked;
+    els.pasteArea.hidden = !on;
+  });
+
+  els.scanPageBtn.addEventListener("click", scanThisPage);
+  els.scanTextBtn.addEventListener("click", scanPastedDraft);
+  els.exportBtn.addEventListener("click", exportAsMarkdown);
+  els.pasteText.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") scanPastedDraft();
+  });
+  if (els.copyBtn){ els.copyBtn.addEventListener("click", copyMarkdown); }
+
+  refreshSummary(null);
+}
