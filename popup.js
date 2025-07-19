@@ -204,3 +204,24 @@ async function leahBoot(){
 
   refreshSummary(null);
 }
+
+function flipChip(chip){
+  const on = chip.dataset.on !== "true";
+  chip.dataset.on = on ? "true" : "false";
+  chip.setAttribute("aria-checked", on ? "true" : "false");
+  activeFilters[chip.dataset.id] = on;
+  chrome.storage.local.set({ biasguard_filters: activeFilters });
+}
+
+async function currentTabId(){ const [tab] = await chrome.tabs.query({active:true, currentWindow:true}); return tab?.id; }
+function pickRules(){ return DEFAULT_RULES.filter(r => activeFilters[r.category]); }
+
+async function scanThisPage(){
+  const tabId = await currentTabId();
+  if (!tabId) return;
+  try{ await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] }); }catch(e){ console.warn("content.js injection note:", e); }
+  const rules = pickRules();
+  const findings = await chrome.tabs.sendMessage(tabId, { type: "biasguard_scan", rules }).catch(()=>[]);
+  currentFindings = findings || [];
+  paintResults(currentFindings, /*fromPage*/true);
+}
