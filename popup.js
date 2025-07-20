@@ -225,3 +225,71 @@ async function scanThisPage(){
   currentFindings = findings || [];
   paintResults(currentFindings, /*fromPage*/true);
 }
+
+function paintResults(findings, fromPage){
+  els.results.innerHTML = "";
+  if (!findings?.length){
+    refreshSummary([]);
+    return;
+  }
+  const counts = tallyByCategory(findings);
+  refreshSummary(findings, counts);
+
+  for (const f of findings){
+    const item = document.createElement("div");
+    item.className = "result";
+    item.setAttribute("role","listitem");
+
+    const meta = document.createElement("div");
+    meta.className = "row";
+    const cat = pill("cat", labelFor(f.category));
+    const sev = pill("sev-" + (f.severity || "low"), f.severity || "low");
+    meta.append(cat, sev);
+
+    const text = document.createElement("div");
+    text.textContent = f.snippet || f.text;
+
+    const why = document.createElement("div");
+    why.className = "muted";
+    why.textContent = "Why: " + f.why;
+
+    const sugg = document.createElement("div");
+    sugg.className = "muted";
+    sugg.textContent = "Try: " + f.suggestion;
+
+    const actions = document.createElement("div");
+    actions.className = "row";
+    if (fromPage && f.highlightId){
+      const btn = document.createElement("button");
+      btn.textContent = "Scroll to";
+      btn.setAttribute("aria-label", "Scroll to occurrence on page");
+      btn.addEventListener("click", async () => {
+        const tabId = await currentTabId();
+        chrome.tabs.sendMessage(tabId, { type:"biasguard_scrollTo", id: f.highlightId });
+      });
+      actions.appendChild(btn);
+    }
+
+    item.append(meta, text, why, sugg, actions);
+    els.results.appendChild(item);
+  }
+}
+
+function refreshSummary(findings, counts){
+  if (!findings){
+    els.summary.textContent = "No scan yet.";
+    return;
+  }
+  if (!findings.length){
+    els.summary.textContent = "Looks clean with current filters ✨";
+    return;
+  }
+  const total = findings.length;
+  const top = Object.entries(counts || {}).sort((a,b)=>b[1]-a[1]).slice(0,3)
+               .map(([k,v])=>`${labelFor(k)}: ${v}`).join(" • ");
+  els.summary.textContent = `${total} flags found. ${top || ""}`;
+}
+
+function labelFor(id){ return CATEGORIES.find(c=>c.id===id)?.label || id; }
+function tallyByCategory(arr){ const c={}; for (const f of arr){ c[f.category]=(c[f.category]||0)+1; } return c; }
+function pill(cls, text){ const b = document.createElement("span"); b.className = "badge " + cls; b.textContent = text; return b; }
