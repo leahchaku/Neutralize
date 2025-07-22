@@ -293,3 +293,42 @@ function refreshSummary(findings, counts){
 function labelFor(id){ return CATEGORIES.find(c=>c.id===id)?.label || id; }
 function tallyByCategory(arr){ const c={}; for (const f of arr){ c[f.category]=(c[f.category]||0)+1; } return c; }
 function pill(cls, text){ const b = document.createElement("span"); b.className = "badge " + cls; b.textContent = text; return b; }
+function scanPastedDraft(){
+  const txt = els.pasteText.value || "";
+  const rules = pickRules();
+  const findings = analyzeDraftText(txt, rules);
+  currentFindings = findings;
+  paintResults(findings, /*fromPage*/false);
+}
+
+function analyzeDraftText(text, rules){
+  const findings = [];
+  if (!text) return findings;
+  for (const r of rules){
+    const re = new RegExp(r.reSrc, r.reFlags);
+    let m;
+    while ((m = re.exec(text)) !== null){
+      const match = m[0];
+      const { snippet } = contextSnippet(text, m.index, m.index + match.length);
+      findings.push({
+        text: match,
+        category: r.category,
+        why: r.why,
+        suggestion: r.suggestion,
+        severity: r.severity,
+        snippet
+      });
+      if (!re.global) break;
+    }
+  }
+  return findings;
+}
+
+function contextSnippet(full, start, end, pad=80){
+  const s = Math.max(0, start - pad);
+  const e = Math.min(full.length, end + pad);
+  let snip = full.slice(s, e).replace(/\s+/g,' ').trim();
+  if (s>0) snip = "…" + snip;
+  if (e<full.length) snip = snip + "…";
+  return { snippet: snip, start, end };
+}
