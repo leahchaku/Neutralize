@@ -332,3 +332,50 @@ function contextSnippet(full, start, end, pad=80){
   if (e<full.length) snip = snip + "…";
   return { snippet: snip, start, end };
 }
+
+function exportAsMarkdown(){
+  if (!currentFindings?.length){
+    alert("Nothing to export yet.");
+    return;
+  }
+  const byCat = {};
+  for (const f of currentFindings){ (byCat[f.category] ||= []).push(f); }
+  let md = `# Neutralize Report\n\nGenerated: ${new Date().toISOString()}\n\n> Educational guidance only; not legal advice.\n\n`;
+  const severityRank = { high: 3, med: 2, low: 1 };
+  for (const cat of Object.keys(byCat)){
+    md += `## ${labelFor(cat)} (${byCat[cat].length})\n\n`;
+    byCat[cat].sort((a,b) => (severityRank[b.severity||"low"]||0) - (severityRank[a.severity||"low"]||0));
+    for (const f of byCat[cat]){
+      md += `- **Text:** ${escapeMd(f.text)}\n  - **Severity:** ${f.severity || "low"}\n  - **Why:** ${f.why}\n  - **Suggestion:** ${f.suggestion}\n  - **Snippet:** ${escapeMd(f.snippet || "")}\n\n`;
+    }
+  }
+  const blob = new Blob([md], { type: "text/markdown" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `neutralize-report-${Date.now()}.md`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 10000);
+}
+
+async function copyMarkdown(){
+  if (!currentFindings?.length){
+    alert("Nothing to copy yet.");
+    return;
+  }
+  const byCat = {};
+  for (const f of currentFindings){ (byCat[f.category] ||= []).push(f); }
+  let md = `# Neutralize Report\n\nGenerated: ${new Date().toISOString()}\n\n> Educational guidance only; not legal advice.\n\n`;
+  const severityRank = { high: 3, med: 2, low: 1 };
+  for (const cat of Object.keys(byCat)){
+    md += `## ${labelFor(cat)} (${byCat[cat].length})\n\n`;
+    byCat[cat].sort((a,b) => (severityRank[b.severity||"low"]||0) - (severityRank[a.severity||"low"]||0));
+    for (const f of byCat[cat]){
+      md += `- **Text:** ${escapeMd(f.text)}\n  - **Severity:** ${f.severity || "low"}\n  - **Why:** ${f.why}\n  - **Suggestion:** ${f.suggestion}\n  - **Snippet:** ${escapeMd(f.snippet || "")}\n\n`;
+    }
+  }
+  await navigator.clipboard.writeText(md);
+  alert("Copied Markdown to clipboard.");
+}
+
+function escapeMd(s){ return (s||"").replace(/([_*`~>])/g, "\\$1"); }
