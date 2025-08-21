@@ -1,16 +1,30 @@
-# Neutralize
+# 🛡️ Neutralize
 
-Neutralize is a Chrome extension that helps users detect and reduce bias in online content. Built with **HTML, CSS, and JavaScript** under **Manifest V3**, it provides a lightweight, user-friendly interface for real-time content analysis.
+Neutralize is a Chrome extension that combines **local heuristics with AI** to detect and highlight biased or loaded language in real time.  
+By blending fast client-side analysis with intelligent fallback to large language models, it helps users navigate online content with **clarity, nuance, and confidence**.
 
 ## ✨ Features
-- **Bias Detection** – Identifies potentially biased or manipulative language in articles, blogs, and news sources.  
-- **Simple UI** – Clean, minimal popup interface with dark mode styling.  
-- **Lightweight & Fast** – Runs seamlessly in the background with minimal performance impact.  
-- **Customizable** – Easily extendable for new rules and detection models.  
+- 🔍 Real-time detection of biased or emotionally loaded language  
+- 🎨 Inline highlighting for easy identification within articles  
+- 📊 Bias score & context panel for deeper insight  
+- ⚡ Optimized for speed with **client-side heuristics** + **AI fallback**  
+- 🔒 Privacy-friendly: minimal external calls, with local-first analysis  
 
-## 📦 Installation
-Since Neutralize is not yet published on the Chrome Web Store, you can install it manually:
+## 🛠️ Tech Stack
+- **Chrome Extensions (MV3)**  
+- **TensorFlow.js / ONNX**  
+- **AI / NLP models**  
+- **API Integration**  
+- **HTML / CSS / JavaScript**  
 
-1. Clone this repository:
+## 🚀 Getting Started
+
+
+⚠️ **Note:** Neutralize has not yet been released on the Chrome Web Store.  
+For now, you can run it locally in developer mode:
+
+### Installation (Developer Mode)
+1. Clone the repository:
    ```bash
    git clone https://github.com/leahchaku/neutralize.git
+   cd neutralize
